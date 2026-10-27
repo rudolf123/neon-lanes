@@ -1,4 +1,4 @@
-import {localizedLogo, supportedLanguages} from './logos.js?v=b9b96e2c52c7';
+import {localizedLogo, supportedLanguages} from './logos.js?v=4c0b585e0128';
 // Coordinates refer to the visible PSD artboard, excluding its black export frame.
 // PSD: 2928×4884; visible artwork: x=351..2574, y=42..4842.
 export const art = 'public/assets/psd/';
@@ -6,7 +6,7 @@ export const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<
 export function box(x,y,w,h) {return `left:${(x-351)/2223*100}%;top:${(y-42)/4800*100}%;width:${w/2223*100}%;height:${h/4800*100}%;`;}
 export function picture(name,x,y,w,h,extra='') {
  if(['menu-star','win-star','game-star'].includes(name))return `<div class="art glow-star" data-art="${name}" style="${box(x,y,w,h)}" aria-hidden="true"><i></i></div>`;
- return `<img class="art ${extra}" data-art="${name}" src="${art}${name}.webp" style="${box(x,y,w,h)}" alt="" draggable="false">`;}
+ return `<img class="art ${extra}" data-art="${name}" src="${art}${name}.webp${['cast','singer','game-dino'].includes(name)?'?v=cast-20261027':''}" style="${box(x,y,w,h)}" alt="" draggable="false">`;}
 export const star = '<span class="score-star" aria-hidden="true"></span>';
 export function days({day,selected,scores,t,final=false}) {
  return `<div class="days ${final?'final-days':''}" style="--unlocked:${Math.max(0,day-1)/6*100}%">${Array.from({length:7},(_,i)=>{
@@ -57,8 +57,8 @@ export function endUI({t,s,scores,diplomaBusy=false,diplomaError=''}){
  </div>`;
 }
 export function gameUI({t,track,score}) {
- return `<div class="screen game-screen"><div class="lanes" aria-label="${t('musicTrack')}">${[0,1].map(l=>`<button class="lane lane-${l}" data-lane="${l}" aria-label="${t(l?'lane2':'lane1')}"><div class="road"><div class="road-shine"></div><div class="road-stream" aria-hidden="true"><i></i><i></i></div></div><div class="notes"></div><span class="target"><span class="target-beam" aria-hidden="true"></span><span class="target-halo" aria-hidden="true"></span></span></button>`).join('')}</div>
- ${picture('sky-stars',356,114,2180,891)}${picture('game-star',1076,662,788,760)}${picture('stage',-265,715,3460,1469,'stage')}${picture('cast',485,740,1953,920)}${picture('singer',1242,711,488,934)}${picture('game-dino',1572,1056,443,582)}
+ return `<div class="screen game-screen"><div class="lanes border-lanes" aria-label="${t('musicTrack')}"><div class="road-border-art" aria-hidden="true"></div>${[0,1].map(l=>`<button class="lane lane-${l}" data-lane="${l}" aria-label="${t(l?'lane2':'lane1')}"><div class="road"><div class="road-shine"></div><div class="road-stream" aria-hidden="true"><i></i><i></i></div></div><div class="notes"></div><span class="target"><span class="target-beam" aria-hidden="true"></span><span class="target-halo" aria-hidden="true"></span></span></button>`).join('')}</div>
+ ${picture('sky-stars',356,114,2180,891)}${picture('game-star',1076,662,788,760)}${picture('stage',-265,715,3460,1469,'stage')}${picture('cast',369,725,2165,948)}${picture('singer',1111,698,487,953)}${picture('game-dino',1468,951,422,677)}
  <div class="track-hud panel" style="${box(472,375,1154,306)}"><span class="note-icon">♫</span><div><small>${t('track')}</small><b>${esc(track.title)}</b><progress id="progress" max="1" value="0"></progress></div></div>
  <div class="total panel" style="${box(1666,376,478,306)}"><small>${t('score')}</small><b>${star}<span id="score">${score}</span></b></div>
  <button class="circle-button pause-button" id="pause" aria-label="${t('paused')}" style="${box(2181,390,276,276)}"><span></span></button>

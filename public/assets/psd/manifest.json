@@ -196,47 +196,62 @@
   },
   "cast": {
     "source": "Rhythm_with_Dino.psd",
-    "layer": "9/0",
-    "name": "all",
+    "sourceSha256": "930a1bcbeb45f3a8d34854f249ffbbd5baad8847f6fd01d58dab9eba2336fb15",
+    "layers": [
+      "girl_1_shadow",
+      "girl_1",
+      "boy_2_shadow",
+      "boy_2",
+      "girl_2_shadow",
+      "girl_2",
+      "boy_1_shadow",
+      "boy_1"
+    ],
     "bbox": [
-      485,
-      740,
-      2438,
-      1660
+      369,
+      725,
+      2534,
+      1673
     ],
     "size": [
       1100,
-      518
+      482
     ]
   },
   "singer": {
     "source": "Rhythm_with_Dino.psd",
-    "layer": "9/1",
-    "name": "pers",
+    "sourceSha256": "930a1bcbeb45f3a8d34854f249ffbbd5baad8847f6fd01d58dab9eba2336fb15",
+    "layers": [
+      "Abigeil_shadow",
+      "Abigeil"
+    ],
     "bbox": [
-      1242,
-      711,
-      1730,
-      1645
+      1111,
+      698,
+      1598,
+      1651
     ],
     "size": [
-      488,
-      934
+      487,
+      953
     ]
   },
   "game-dino": {
     "source": "Rhythm_with_Dino.psd",
-    "layer": "9/2",
-    "name": "dino",
+    "sourceSha256": "930a1bcbeb45f3a8d34854f249ffbbd5baad8847f6fd01d58dab9eba2336fb15",
+    "layers": [
+      "dino_shadow",
+      "dino"
+    ],
     "bbox": [
-      1572,
-      1056,
-      2015,
-      1638
+      1468,
+      951,
+      1890,
+      1628
     ],
     "size": [
-      443,
-      582
+      422,
+      677
     ]
   },
   "sky-stars": {
@@ -328,5 +343,27 @@
       1100,
       636
     ]
+  },
+  "road-borders": {
+    "source": "Rhythm_with_Dino.psd",
+    "sourceSha256": "930a1bcbeb45f3a8d34854f249ffbbd5baad8847f6fd01d58dab9eba2336fb15",
+    "layers": [
+      "2/0",
+      "3/0"
+    ],
+    "bbox": [
+      351,
+      1819,
+      2574,
+      4842
+    ],
+    "size": [
+      1100,
+      1496
+    ],
+    "perimeter": {
+      "opaqueDistance": 40,
+      "fadeEndDistance": 60
+    }
   }
 }

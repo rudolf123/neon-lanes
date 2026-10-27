@@ -1,4 +1,4 @@
-import {decodeLeaderboard} from './event-api.js?v=b9b96e2c52c7';
+import {decodeLeaderboard} from './event-api.js?v=4c0b585e0128';
 // Swagger: https://swagger.dsu-academy.com/gsd.swagger.json
 // Day IDs approved by the app/backend owner on 2026-10-07.
 export const integrationConfig = {

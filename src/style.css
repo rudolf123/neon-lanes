@@ -81,3 +81,14 @@ body{padding:0}
 
 .end-screen .diploma-status{position:absolute;top:calc(53.2292% + 57cqw);left:7%;width:86%;margin:0;color:white;text-align:center;font:600 3cqw/1.35 system-ui;overflow-wrap:anywhere}
 .end-screen .diploma-status:not(:empty){padding:1cqw 2cqw;border-radius:2cqw;background:#512879}
+/* Only the authored PSD road perimeters replace the old edges.
+   Keep the original animated road fill, streams, targets and input geometry. */
+.game-screen .border-lanes{isolation:isolate}
+.game-screen .border-lanes::before{display:none}
+.border-lanes>.lane{isolation:auto}
+.border-lanes .road{top:0;bottom:auto;height:107.839894%;width:117.139001%;translate:0 0;z-index:0}
+.border-lanes .lane-0 .road{left:-17.723796%;right:auto;clip-path:polygon(42.8% 0,99% 0,99% 100%,0 100%)}
+.border-lanes .lane-1 .road{left:.764732%;right:auto;clip-path:polygon(1.2% 0,57.2% 0,100% 100%,1.2% 100%)}
+.border-lanes .road::before{display:none}
+.road-border-art{position:absolute;inset:0;z-index:1;pointer-events:none;background:url('../public/assets/psd/road-borders.webp?v=borders-20261027') center/100% 100% no-repeat}
+.teaching .road-border-art{filter:brightness(.3)}
