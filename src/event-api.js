@@ -17,15 +17,15 @@ export function validateApiConfig(config){
 }
 export function createEventApi(config,context,fetcher=fetch){
  validateApiConfig(config);
- async function request(path,{query,body,auth=false,text=false,image=false}={}){
+ async function request(path,{query,body,auth=false,text=false,image=false,json=false}={}){
   const url=new URL(config.apiBaseUrl.replace(/\/$/,'')+path);
   if(query)url.search=new URLSearchParams(query).toString();
   const headers={Accept:image?'image/png':'application/json'};
   if(auth)headers[config.authHeader]=(config.authPrefix||'')+context.authToken;
-  if(body)headers['Content-Type']=text?'text/plain':config.bodyEncoding==='form'?'application/x-www-form-urlencoded':'application/json';
+  if(body)headers['Content-Type']=text?'text/plain':!json&&config.bodyEncoding==='form'?'application/x-www-form-urlencoded':'application/json';
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
   try{
-   const response=await fetcher(url.href,{method:body?'POST':'GET',headers,body:body?(text?body:config.bodyEncoding==='form'?new URLSearchParams(body).toString():JSON.stringify(body)):undefined,cache:'no-store',credentials:'omit',redirect:'error',signal:controller.signal});
+   const response=await fetcher(url.href,{method:body?'POST':'GET',headers,body:body?(text?body:!json&&config.bodyEncoding==='form'?new URLSearchParams(body).toString():JSON.stringify(body)):undefined,cache:'no-store',credentials:'omit',redirect:'error',signal:controller.signal});
    if(!response.ok)throw Error('api-http-'+response.status);
    if(image){
     const blob=await response.blob();
@@ -50,7 +50,7 @@ export function createEventApi(config,context,fetcher=fetch){
    return {rows,playerScore:result.playerScore};
   },
   saveDay(day,score){return request('/leaderboard/add',{body:{player_id:context.accountUuid,player_name:context.playerName,game_id:config.gameIds[day-1],region:context.region,[config.scoreField]:score}});},
-  complete(){return request('/statistics/rythm-event/add',{auth:true,body:{event_type:'rythm_event_completed'}});},
+  complete(){return request('/statistics/rythm-event/add',{auth:true,body:{event_type:'rhythm_complete'},json:true});},
   async getDiploma({name,score,lang='en'}){
    if(typeof name!=='string'||!name.trim()||Array.from(name.trim()).length>40)throw Error('diploma-name');
    if(!Number.isSafeInteger(score)||score<0)throw Error('diploma-score');
