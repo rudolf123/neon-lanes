@@ -1,12 +1,9 @@
 // Story receipts are separate from scores and the API retry queue.
 const DAY = 86400000;
-// Reward stories depend on calendar time, never on finishing the seventh song.
-// The requested seven-day story cycle ends exactly at the start of day eight,
-// even if the existing game's configured end date is longer.
+// Story availability and gameplay share the configured event deadline.
 export function storyCalendar(event, now) {
   const day = Math.floor((now - event.startsAt) / DAY) + 1;
-  const rewardAt = event.startsAt + 7 * DAY;
-  return {day, active: day >= 1 && day <= 7 && now < event.endsAt, rewardAvailable: now >= rewardAt};
+  return {day, active: day >= 1 && day <= 7 && now < event.endsAt, rewardAvailable: now >= event.endsAt};
 }
 export function storiesKey({accountUuid, eventId, startsAt, endsAt}) {
   return '321playsy:stories:v1:' + JSON.stringify([accountUuid || 'local', eventId, startsAt, endsAt]);

@@ -1,4 +1,4 @@
-import {createStoryHistory,storiesKey,storyCalendar} from './stories-state.js?v=4c0b585e0128';
+import {createStoryHistory,storiesKey,storyCalendar} from './stories-state.js?v=end-date-20261027';
 import {mountStories} from './stories-player.js?v=4c0b585e0128';
 import {storyContent} from './stories-content.js?v=4c0b585e0128';
 import {integrationConfig} from './integration-config.js?v=4c0b585e0128';
@@ -8,7 +8,7 @@ import {lockedDayMessage} from './locked-day.js?v=4c0b585e0128';
 import {loadTrack,unlockAudio,beep,celebrate,stopEffects,prepareApplause} from './game-audio.js?v=4c0b585e0128';
 import {runtime} from './runtime-config.js?v=4c0b585e0128';
 import {loadEvent} from './event-source.js?v=4c0b585e0128';
-import {eventState, award, saveScore, timingPoints} from './event.js?v=day-eight-reward-20261027';
+import {eventState, award, saveScore, timingPoints} from './event.js?v=end-date-20261027';
 import {I18N} from './reference-i18n.js?v=4c0b585e0128';
 import {copy} from './copy.js?v=4c0b585e0128';
 import {decorateScreen,hitMotion,flyHitNote,victoryConfetti} from './motion.js?v=4c0b585e0128';
@@ -200,7 +200,7 @@ function finish(){
 }
 function pause(){if(screen!=='game')return;audio?.pause();stopEffects();if(run?.countdown){run.countdownRemaining=Math.max(0,run.countdown-performance.now());run.countdown=null;}cancelAnimationFrame(frame);screen='pause';render();}
 async function resume(){if(!run)return;screen='game';gameView();if(run.tutorial){showTutorial();return;}if(!audio)return;for(const n of run.notes)n.el=null;try{if(run.countdownRemaining!=null){run.countdown=performance.now()+run.countdownRemaining;run.countdownRemaining=null;}else await audio.play();tick();}catch{pause();}}
-function updateTimer(){if(!event)return;const s=state();if(screen==='stories')return;if(s.ended&&!['end','certificate'].includes(screen)){stop();screen='end';render();return;}if($('#timer')){const minutes=Math.floor(Math.max(0,s.remaining)/60000),days=Math.floor(minutes/1440),hours=Math.floor(minutes/60)%24;const units={ru:['д.','ч.','м.'],en:['d.','h.','m.'],fr:['j.','h.','min.'],ar:['ي.','س.','د.'],hi:['दि.','घं.','मि.']}[lang];$('#timer').textContent=`${days?`${days} ${units[0]} `:''}${hours} ${units[1]} ${String(minutes%60).padStart(2,'0')} ${units[2]}`;}if(screen==='menu'&&s.day!==lastDay){lastDay=s.day;render();}}
+function updateTimer(){if(!event)return;const s=state();if(screen==='stories'){if(!s.ended)return;disposeStories();}if(s.ended&&!['end','certificate'].includes(screen)){stop();screen='end';render();return;}if($('#timer')){const minutes=Math.floor(Math.max(0,s.remaining)/60000),days=Math.floor(minutes/1440),hours=Math.floor(minutes/60)%24;const units={ru:['д.','ч.','м.'],en:['d.','h.','m.'],fr:['j.','h.','min.'],ar:['ي.','س.','د.'],hi:['दि.','घं.','मि.']}[lang];$('#timer').textContent=`${days?`${days} ${units[0]} `:''}${hours} ${units[1]} ${String(minutes%60).padStart(2,'0')} ${units[2]}`;}if(screen==='menu'&&s.day!==lastDay){lastDay=s.day;render();}}
 let lastDay;
 function displayDiploma(blob){
  if(diplomaUrl)URL.revokeObjectURL(diplomaUrl);
@@ -288,7 +288,7 @@ async function boot(){
  event=loadedEvent;
  storyHistory=createStoryHistory(storiesKey({accountUuid:launch?.accountUuid||window.PLAY321_CONTEXT?.playerId||'local',eventId:event.id,startsAt:event.startsAt,endsAt:event.endsAt}));
  storyHistory.enter(storyCalendar(event,now()));
- selected=startType?Math.max(1,state().day):Math.max(1,Math.min(state().day,Object.keys(scores).length+1));lastDay=state().day;screen=params.has('demo')&&['menu','result','end'].includes(params.get('screen'))?params.get('screen'):'menu';if(startType==='banner'&&openStories()){}else if(startType==='game'&&state().day>0&&!state().ended)startGame({fromLaunch:true});else render();emit('ready',{language:lang,orientation:'portrait',integration:api?'api':launch?'local':'demo'});if(sync&&(Object.keys(sync.state.pending).length||sync.state.completionPending))syncProgress();
+ selected=startType?Math.max(1,state().day):Math.max(1,Math.min(state().day,Object.keys(scores).length+1));lastDay=state().day;screen=params.has('demo')&&['menu','result','end'].includes(params.get('screen'))?params.get('screen'):'menu';if(startType==='banner'&&!state().ended&&openStories()){}else if(startType==='game'&&state().day>0&&!state().ended)startGame({fromLaunch:true});else render();emit('ready',{language:lang,orientation:'portrait',integration:api?'api':launch?'local':'demo'});if(sync&&(Object.keys(sync.state.pending).length||sync.state.completionPending))syncProgress();
  }catch{event=null;screen='error';render();}
 }
 window.addEventListener('keydown',e=>{if(e.repeat)return;if(e.code==='KeyQ'||e.code==='ArrowLeft')hit(0);if(e.code==='KeyW'||e.code==='ArrowRight')hit(1);});
