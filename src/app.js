@@ -12,7 +12,7 @@ import {eventState, award, saveScore, timingPoints} from './event.js?v=4c0b585e0
 import {I18N} from './reference-i18n.js?v=4c0b585e0128';
 import {copy} from './copy.js?v=4c0b585e0128';
 import {decorateScreen,hitMotion,flyHitNote,victoryConfetti} from './motion.js?v=4c0b585e0128';
-import {menuUI,resultUI,endUI,gameUI} from './psd-ui.js?v=4c0b585e0128';
+import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=diploma-inline-20261027';
 const $ = s=>document.querySelector(s), app=$('#app');
 const params=new URLSearchParams(location.search), assets='public/assets/';
 const startType=['banner','game'].includes(params.get('start_type'))?params.get('start_type'):null;
@@ -27,7 +27,7 @@ if(!copy[lang]) lang='ru';
 let event, anchor, scores={}, tracks=[], selected=1, screen='loading', audio, frame, run, storageKey, playerName='';
 let launch,api,sync,boards={},syncStatus='local',syncInFlight=null,completionEmitted=false;
 let storiesPlayer=null,storyHistory=null;
-let diplomaBusy=false,diplomaError='';
+let diplomaBusy=false,diplomaError='',diplomaUrl='';
 const t=k=>copy[lang][k] ?? I18N[lang]?.[k] ?? k;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>event.serverNow + performance.now()-anchor;
@@ -79,7 +79,7 @@ function render(){
  window.scrollTo(0,0);
  document.title=`321playsy · ${t('appTitle')}`;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('#rotateText').textContent=t('rotate');
  if(!event){app.innerHTML=`<div class="screen utility-screen"><div class="center"><h2>${t(screen==='error'?(appLaunch?'connectionError':'error'):'loading')}</h2>${screen==='error'?`<button class="primary" id="retry">${t('retry')}</button>`:''}</div></div>`;$('#retry')?.addEventListener('click',boot);decorateScreen();return;}
- if(state().ended){stop();screen='end';notifyCompletion();}
+ if(state().ended){stop();if(screen!=='certificate')screen='end';notifyCompletion();}
  const ctx={t,s:state(),tracks,selected,scores,lang,name:playerName,demo:params.has('demo'),appLaunch,online:!!api,rows:boards[selected],syncStatus,diplomaBusy,diplomaError,track:tracks[selected-1],score:run?.score??scores[selected]??0};
  if(screen==='menu'){
  app.innerHTML=menuUI(ctx)+demoControls();
@@ -93,7 +93,12 @@ function render(){
  const proceed=()=>{stopEffects();screen='menu';selected=Math.min(selected+1,state().day);render();};
  $('#continue').onclick=()=>{if(!appLaunch){playerName=$('#player-name').value.trim().slice(0,30);try{localStorage.setItem(storageKey+':name',playerName);}catch{}}proceed();};
  }else if(screen==='end'){
- app.innerHTML=endUI(ctx)+demoControls();$('#certificate').onclick=downloadCertificate;
+ app.innerHTML=endUI(ctx)+demoControls();$('#certificate').onclick=showCertificate;
+ $('#back').onclick=()=>{stop();emitClose();};
+ }else if(screen==='certificate'){
+ app.innerHTML=certificateUI({t,url:diplomaUrl});
+ $('#back').onclick=()=>{screen='end';render();URL.revokeObjectURL(diplomaUrl);diplomaUrl='';};
+ $('#diploma-image').onerror=()=>{URL.revokeObjectURL(diplomaUrl);diplomaUrl='';diplomaError='diplomaError';screen='end';render();};
  }else if(screen==='pause'){
  app.innerHTML=`<div class="screen utility-screen pause-screen"><button class="circle-button utility-back" id="back" aria-label="${t('exitMenu')}"><span class="back-arrow"></span></button><div class="center"><span class="large-note">Ⅱ</span><h1>${t('paused')}</h1><button class="primary" id="start">${t('resume')}</button></div></div>`;
  $('#start').onclick=resume;$('#back').onclick=()=>{stop();run=null;screen='menu';render();};
@@ -197,12 +202,11 @@ function pause(){if(screen!=='game')return;audio?.pause();stopEffects();if(run?.
 async function resume(){if(!run)return;screen='game';gameView();if(run.tutorial){showTutorial();return;}if(!audio)return;for(const n of run.notes)n.el=null;try{if(run.countdownRemaining!=null){run.countdown=performance.now()+run.countdownRemaining;run.countdownRemaining=null;}else await audio.play();tick();}catch{pause();}}
 function updateTimer(){if(!event)return;const s=state();if(screen==='stories')return;if(s.ended&&!['end','certificate'].includes(screen)){stop();screen='end';render();return;}if($('#timer')){const minutes=Math.floor(Math.max(0,s.remaining)/60000),days=Math.floor(minutes/1440),hours=Math.floor(minutes/60)%24;const units={ru:['д.','ч.','м.'],en:['d.','h.','m.'],fr:['j.','h.','min.'],ar:['ي.','س.','د.'],hi:['दि.','घं.','मि.']}[lang];$('#timer').textContent=`${days?`${days} ${units[0]} `:''}${hours} ${units[1]} ${String(minutes%60).padStart(2,'0')} ${units[2]}`;}if(screen==='menu'&&s.day!==lastDay){lastDay=s.day;render();}}
 let lastDay;
-function saveDiplomaBlob(blob,filename){
- const url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),60000);
+function displayDiploma(blob){
+ if(diplomaUrl)URL.revokeObjectURL(diplomaUrl);
+ diplomaUrl=URL.createObjectURL(blob);screen='certificate';render();
 }
-async function downloadCertificate(){
+async function showCertificate(){
  if(diplomaBusy)return;
  if(appLaunch){
   diplomaBusy=true;diplomaError='';render();
@@ -215,7 +219,7 @@ async function downloadCertificate(){
    }
    const total=state().total,language=lang;
    const blob=await api.getDiploma({name:playerName,score:total,lang:language});
-   saveDiplomaBlob(blob,`321playsy-diploma-${language}.png`);
+   displayDiploma(blob);
    emit('certificateRequested',{total,tier:award(total,maximum()),language});
   }catch(error){
    diplomaError=error.message==='api-http-401'?'diplomaAuthError':error.message==='diploma-name'?'diplomaNameError':error.message==='api-http-422'?'diplomaValidationError':error.message==='diploma-sync'?'diplomaSyncError':'diplomaError';
@@ -227,7 +231,7 @@ async function downloadCertificate(){
  c.fillStyle='#fff9e8';c.fillRect(0,0,1000,1400);c.strokeStyle={gold:'#d79a23',silver:'#8493bc',bronze:'#b77a50'}[tier];c.lineWidth=16;c.strokeRect(45,45,910,1310);c.textAlign='center';c.direction=lang==='ar'?'rtl':'ltr';c.fillStyle='#6b24be';
  const line=(text,y,size)=>{c.font=`bold ${size}px system-ui`;c.fillText(text,500,y,850);};
  line('321playsy',170,46);line(t('diploma'),340,60);line(t(tier),510,64);line(t('for'),620,30);line(t('appTitle'),680,40);line(String(state().total),880,120);line(t('all'),950,30);line(t('thanks'),1180,32);
- canvas.toBlob(blob=>{if(blob)saveDiplomaBlob(blob,`321playsy-${tier}-${lang}.png`);});
+ canvas.toBlob(blob=>{if(blob)displayDiploma(blob);});
  emit('certificateRequested',{total:state().total,tier,language:lang});
 }
 function notifyCompletion(){

@@ -50,6 +50,7 @@ export function resultUI({t,track,selected,scores,name,score,demo,online,rows,ap
 export function endUI({t,s,scores,diplomaBusy=false,diplomaError=''}){
  const complete=Object.keys(scores).length;
  return `<div class="screen end-screen">${picture('win-star',694,1061,1541,1484)}${picture('win-dino',1009,1186,875,1151)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
+ <button class="circle-button end-close" id="back" aria-label="${esc(t('close'))}">×</button>
  <h1 class="end-title" style="${box(560,419,1810,580)}">${t('eventCompleted')}</h1>
  <section class="end-board panel" style="${box(427,2597,2075,787)}"><h2>${star}${t('score')}: ${s.total}</h2><h3>${complete===7?t('allDaysCompleted'):`${t('done')}: ${complete}/7`}</h3>${days({day:7,selected:7,scores,t,final:true})}</section>
  <button id="certificate" class="primary gift-button" style="${box(464,3588,2005,340)}" ${diplomaBusy?'disabled aria-busy="true"':''}><img src="${art}gift.webp" alt="">${t(diplomaBusy?'diplomaLoading':'getDiploma')}</button>
@@ -63,4 +64,8 @@ export function gameUI({t,track,score}) {
  <div class="total panel" style="${box(1666,376,478,306)}"><small>${t('score')}</small><b>${star}<span id="score">${score}</span></b></div>
  <button class="circle-button pause-button" id="pause" aria-label="${t('paused')}" style="${box(2181,390,276,276)}"><span></span></button>
  <div id="hit-feedback" class="hit-feedback" aria-live="polite" aria-atomic="true"></div><div id="feedback" class="countdown" aria-live="polite"></div></div>`;
+}
+
+export function certificateUI({t,url}){
+ return `<section class="screen certificate-screen" aria-label="${esc(t('diploma'))}"><header class="certificate-header"><button class="circle-button" id="back" aria-label="${esc(t('close'))}"><span class="back-arrow"></span></button><h1>${esc(t('diploma'))}</h1></header><img id="diploma-image" src="${esc(url)}" alt="${esc(t('diploma'))}"></section>`;
 }
