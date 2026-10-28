@@ -47,13 +47,13 @@ export function resultUI({t,track,selected,scores,name,score,demo,online,rows,ap
  <div class="result-board-wrap" style="${box(427,1835,2075,1667)}">${board({track,scores,selected,t,name,result:true,demo,online,rows})}</div>
  <button id="continue" class="primary" style="${box(464,3588,2003,307)}">${t('continue')}</button></div>`;
 }
-export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink=''}){
+export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink='',diplomaDownloadTried=false}){
  const complete=Object.keys(scores).length;
- return `<div class="screen end-screen">${picture('win-star',694,1061,1541,1484)}${diplomaLink?`<img id="diploma-preview" class="diploma-preview" src="${esc(diplomaLink)}" alt="${esc(t('diploma'))}">`:picture('win-dino',1009,1186,875,1151)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
+ return `<div class="screen end-screen">${picture('win-star',694,1061,1541,1484)}${diplomaLink?`<div class="diploma-preview"><img id="diploma-preview" src="${esc(diplomaLink)}" alt="${esc(t('diploma'))}"></div>`:picture('win-dino',1009,1186,875,1151)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
  <button class="circle-button end-close" id="back" aria-label="${esc(t('close'))}">×</button>
  <h1 class="end-title" style="${box(560,419,1810,580)}">${t('eventCompleted')}</h1>
  <section class="end-board panel" style="${box(427,2597,2075,787)}"><h2>${star}${t('score')}: ${s.total}</h2><h3>${complete===7?t('allDaysCompleted'):`${t('done')}: ${complete}/7`}</h3>${days({day:7,selected:7,scores,t,final:true})}</section>
- ${diplomaLink?`<div class="diploma-link-wrap"><label for="diploma-link">${esc(t('diplomaLinkLabel'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"></div>`:`<button id="certificate" class="primary gift-button" style="${box(464,3588,2005,340)}" ${diplomaBusy||!s.rewardAvailable?'disabled':''} ${diplomaBusy?'aria-busy="true"':''}><img src="${art}gift.webp" alt="">${t(!s.rewardAvailable?'diplomaDayEight':diplomaBusy?'diplomaLoading':'getDiploma')}</button>`}
+ ${diplomaLink?`<div class="diploma-link-wrap"><label for="diploma-link">${esc(t('diplomaLinkLabel'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"><button id="diploma-download" type="button" class="primary diploma-download">${esc(t('diplomaDownload'))}</button><a id="diploma-open" class="diploma-open" href="${esc(diplomaLink)}" target="_blank" rel="noopener noreferrer" ${diplomaDownloadTried?'':'hidden'}>${esc(t('diplomaOpen'))}</a></div>`:`<button id="certificate" class="primary gift-button" style="${box(464,3588,2005,340)}" ${diplomaBusy||!s.rewardAvailable?'disabled':''} ${diplomaBusy?'aria-busy="true"':''}><img src="${art}gift.webp" alt="">${t(!s.rewardAvailable?'diplomaDayEight':diplomaBusy?'diplomaLoading':'getDiploma')}</button>`}
  <p class="diploma-status" role="status">${diplomaError?esc(t(diplomaError)):''}</p>
  </div>`;
 }

@@ -42,3 +42,15 @@ Object.assign(copy.en,{diplomaLinkLabel:'Copy and save the link to your diploma.
 Object.assign(copy.fr,{diplomaLinkLabel:'Copie et garde le lien vers ton diplôme. Il sera toujours disponible.',diplomaImageError:'Impossible de charger l’image. Le lien vers ton diplôme est ci-dessous.'});
 Object.assign(copy.ar,{diplomaLinkLabel:'انسخ رابط شهادتك واحتفظ به، سيكون متاحًا دائمًا.',diplomaImageError:'تعذر تحميل الصورة. رابط شهادتك أدناه.'});
 Object.assign(copy.hi,{diplomaLinkLabel:'अपने प्रमाणपत्र का लिंक कॉपी करके रखें। यह हमेशा उपलब्ध रहेगा।',diplomaImageError:'चित्र लोड नहीं हुआ। आपके प्रमाणपत्र का लिंक नीचे है।'});
+
+Object.assign(copy.ru,{diplomaDownload:'Скачать диплом',diplomaDownloadError:'Не удалось скачать диплом. Скопируй ссылку и открой её в браузере.'});
+Object.assign(copy.en,{diplomaDownload:'Download diploma',diplomaDownloadError:'Could not download the diploma. Copy the link and open it in your browser.'});
+Object.assign(copy.fr,{diplomaDownload:'Télécharger le diplôme',diplomaDownloadError:'Téléchargement impossible. Copie le lien et ouvre-le dans ton navigateur.'});
+Object.assign(copy.ar,{diplomaDownload:'تنزيل الشهادة',diplomaDownloadError:'تعذر تنزيل الشهادة. انسخ الرابط وافتحه في المتصفح.'});
+Object.assign(copy.hi,{diplomaDownload:'प्रमाणपत्र डाउनलोड करें',diplomaDownloadError:'प्रमाणपत्र डाउनलोड नहीं हुआ। लिंक कॉपी करके ब्राउज़र में खोलें।'});
+
+Object.assign(copy.ru,{diplomaOpen:'Не скачалось? Открыть диплом'});
+Object.assign(copy.en,{diplomaOpen:'Download failed? Open your diploma'});
+Object.assign(copy.fr,{diplomaOpen:'Pas de téléchargement ? Ouvre ton diplôme'});
+Object.assign(copy.ar,{diplomaOpen:'لم يتم التنزيل؟ افتح شهادتك'});
+Object.assign(copy.hi,{diplomaOpen:'डाउनलोड नहीं हुआ? प्रमाणपत्र खोलें'});

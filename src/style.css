@@ -102,8 +102,18 @@ body{padding:0}
 #diploma-image{display:block;width:100%;height:auto;background:white;border-radius:2cqw}
 
 /* Diploma and permanent link replace the dinosaur and reward button. */
-.end-screen .diploma-preview{position:absolute;top:22%;left:12%;width:76%;height:29%;object-fit:contain;z-index:3}
+.end-screen .diploma-preview{position:absolute;top:22%;left:12%;width:76%;height:29%;z-index:3;opacity:0}
+.end-screen .diploma-preview.is-loaded{opacity:1;animation:diploma-float 4s ease-in-out .7s infinite}
+.diploma-preview img{width:100%;height:100%;object-fit:contain}
+.diploma-preview.is-loaded img{animation:diploma-appear .7s cubic-bezier(.22,1.35,.36,1) both}
+@keyframes diploma-appear{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+@keyframes diploma-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-1.2cqw) rotate(2deg)}}
+@media(prefers-reduced-motion:reduce){.end-screen .diploma-preview,.diploma-preview img{animation:none}}
 .end-screen .diploma-link-wrap{position:absolute;top:calc(53.2292% + 38cqw);left:7%;width:86%;z-index:5;text-align:center;color:#fff;font:700 3.2cqw/1.25 system-ui}
 .diploma-link-wrap label{display:block;margin:0 0 1.5cqw}
 .diploma-link-wrap input{display:block;width:100%;height:10cqw;padding:1.5cqw 2cqw;border:0;border-radius:2cqw;background:#fff;color:#512879;font:500 3cqw/1 system-ui;user-select:text;-webkit-user-select:text}
-.end-screen .diploma-link-wrap ~ .diploma-status{top:calc(53.2292% + 62cqw)}
+.diploma-download{position:relative;width:100%;height:10cqw;margin-top:1.5cqw;font-size:3.7cqw}
+.diploma-open{display:block;margin-top:1cqw;color:#fff;text-decoration:underline;font:700 3cqw/1.2 system-ui}
+.diploma-open[hidden]{display:none}
+.end-screen .diploma-link-wrap ~ .diploma-status{top:47%;z-index:6}
+.end-screen .diploma-link-wrap ~ .sync-status{bottom:1cqw}
