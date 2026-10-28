@@ -1,9 +1,9 @@
 // Story receipts are separate from scores and the API retry queue.
 const DAY = 86400000;
-// Story availability and gameplay share the configured event deadline.
+// The completion story opens with the diploma after seven full days.
 export function storyCalendar(event, now) {
   const day = Math.floor((now - event.startsAt) / DAY) + 1;
-  return {day, active: day >= 1 && day <= 7 && now < event.endsAt, rewardAvailable: now >= event.endsAt};
+  return {day, active: day >= 1 && day <= 7 && now < event.endsAt, rewardAvailable: now >= event.startsAt + 7 * DAY};
 }
 export function storiesKey({accountUuid, eventId, startsAt, endsAt}) {
   return '321playsy:stories:v1:' + JSON.stringify([accountUuid || 'local', eventId, startsAt, endsAt]);

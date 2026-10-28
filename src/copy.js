@@ -31,3 +31,8 @@ const diplomaCopy={
  hi:{diplomaLoading:'प्रमाणपत्र तैयार हो रहा है…',diplomaError:'प्रमाणपत्र नहीं मिल सका। फिर कोशिश करने के लिए प्रमाणपत्र बटन दबाएँ।',diplomaAuthError:'लॉगिन की समय सीमा समाप्त हो गई। ऐप से गेम फिर खोलें।',diplomaNameError:'नाम 1 से 40 अक्षरों का होना चाहिए। ऐप में नाम बदलें और गेम फिर खोलें।',diplomaValidationError:'सर्वर ने नाम या स्कोर स्वीकार नहीं किया। ऐप में नाम जाँचें और गेम फिर खोलें।',diplomaSyncError:'पहले परिणाम सहेजने होंगे। फिर कोशिश करने के लिए प्रमाणपत्र बटन दबाएँ।'}
 };
 for(const language of Object.keys(copy))Object.assign(copy[language],diplomaCopy[language]);
+Object.assign(copy.ru,{diplomaDayEight:'Диплом доступен с восьмого дня'});
+Object.assign(copy.en,{diplomaDayEight:'Diploma available on day eight'});
+Object.assign(copy.fr,{diplomaDayEight:'Diplôme disponible au huitième jour'});
+Object.assign(copy.ar,{diplomaDayEight:'الشهادة متاحة في اليوم الثامن'});
+Object.assign(copy.hi,{diplomaDayEight:'प्रमाणपत्र आठवें दिन उपलब्ध होगा'});

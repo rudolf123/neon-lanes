@@ -53,7 +53,7 @@ export function endUI({t,s,scores,diplomaBusy=false,diplomaError=''}){
  <button class="circle-button end-close" id="back" aria-label="${esc(t('close'))}">×</button>
  <h1 class="end-title" style="${box(560,419,1810,580)}">${t('eventCompleted')}</h1>
  <section class="end-board panel" style="${box(427,2597,2075,787)}"><h2>${star}${t('score')}: ${s.total}</h2><h3>${complete===7?t('allDaysCompleted'):`${t('done')}: ${complete}/7`}</h3>${days({day:7,selected:7,scores,t,final:true})}</section>
- <button id="certificate" class="primary gift-button" style="${box(464,3588,2005,340)}" ${diplomaBusy?'disabled aria-busy="true"':''}><img src="${art}gift.webp" alt="">${t(diplomaBusy?'diplomaLoading':'getDiploma')}</button>
+ <button id="certificate" class="primary gift-button" style="${box(464,3588,2005,340)}" ${diplomaBusy||!s.rewardAvailable?'disabled':''} ${diplomaBusy?'aria-busy="true"':''}><img src="${art}gift.webp" alt="">${t(!s.rewardAvailable?'diplomaDayEight':diplomaBusy?'diplomaLoading':'getDiploma')}</button>
  <p class="diploma-status" role="status">${diplomaError?esc(t(diplomaError)):''}</p>
  </div>`;
 }
