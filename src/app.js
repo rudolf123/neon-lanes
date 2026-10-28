@@ -3,16 +3,16 @@ import {mountStories} from './stories-player.js?v=4c0b585e0128';
 import {storyContent} from './stories-content.js?v=4c0b585e0128';
 import {integrationConfig} from './integration-config.js?v=4c0b585e0128';
 import {isAppLaunch,loadLaunchContext,launchEvent,progressKey} from './launch-context.js?v=4c0b585e0128';
-import {createEventApi,createProgressSync} from './event-api.js?v=song-statistics-20261028';
+import {createEventApi,createProgressSync} from './event-api.js?v=diploma-url-20261028';
 import {lockedDayMessage} from './locked-day.js?v=4c0b585e0128';
 import {loadTrack,unlockAudio,beep,celebrate,stopEffects,prepareApplause} from './game-audio.js?v=4c0b585e0128';
 import {runtime} from './runtime-config.js?v=4c0b585e0128';
 import {loadEvent} from './event-source.js?v=4c0b585e0128';
 import {eventState, award, saveScore, timingPoints} from './event.js?v=day-eight-20261028';
 import {I18N} from './reference-i18n.js?v=4c0b585e0128';
-import {copy} from './copy.js?v=day-eight-20261028';
+import {copy} from './copy.js?v=diploma-url-20261028';
 import {decorateScreen,hitMotion,flyHitNote,victoryConfetti} from './motion.js?v=4c0b585e0128';
-import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=day-eight-20261028';
+import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=diploma-url-20261028';
 const $ = s=>document.querySelector(s), app=$('#app');
 const params=new URLSearchParams(location.search), assets='public/assets/';
 const startType=['banner','game'].includes(params.get('start_type'))?params.get('start_type'):null;
@@ -27,7 +27,7 @@ if(!copy[lang]) lang='ru';
 let event, anchor, scores={}, tracks=[], selected=1, screen='loading', audio, frame, run, storageKey, playerName='';
 let launch,api,sync,boards={},syncStatus='local',syncInFlight=null,completionEmitted=false;
 let storiesPlayer=null,storyHistory=null,storiesReward=false;
-let diplomaBusy=false,diplomaError='',diplomaUrl='';
+let diplomaBusy=false,diplomaError='',diplomaUrl='',diplomaLink='';
 const t=k=>copy[lang][k] ?? I18N[lang]?.[k] ?? k;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>event.serverNow + performance.now()-anchor;
@@ -81,7 +81,7 @@ function render(){
  document.title=`321playsy · ${t('appTitle')}`;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('#rotateText').textContent=t('rotate');
  if(!event){app.innerHTML=`<div class="screen utility-screen"><div class="center"><h2>${t(screen==='error'?(appLaunch?'connectionError':'error'):'loading')}</h2>${screen==='error'?`<button class="primary" id="retry">${t('retry')}</button>`:''}</div></div>`;$('#retry')?.addEventListener('click',boot);decorateScreen();return;}
  if(state().ended){stop();if(screen!=='certificate')screen='end';notifyCompletion();}
- const ctx={t,s:state(),tracks,selected,scores,lang,name:playerName,demo:params.has('demo'),appLaunch,online:!!api,rows:boards[selected],syncStatus,diplomaBusy,diplomaError,track:tracks[selected-1],score:run?.score??scores[selected]??0};
+ const ctx={t,s:state(),tracks,selected,scores,lang,name:playerName,demo:params.has('demo'),appLaunch,online:!!api,rows:boards[selected],syncStatus,diplomaBusy,diplomaError,diplomaLink,track:tracks[selected-1],score:run?.score??scores[selected]??0};
  if(screen==='menu'){
  app.innerHTML=menuUI(ctx)+demoControls();
  if(logo){const nextLogo=app.querySelector('[data-art="logo"]');logo.src=nextLogo.src;logo.alt=nextLogo.alt;nextLogo.replaceWith(logo);logo.getAnimations().forEach((a,i)=>{if(logoTimes[i]!=null)a.currentTime=logoTimes[i];});}
@@ -94,7 +94,10 @@ function render(){
  const proceed=()=>{stopEffects();screen='menu';selected=Math.min(selected+1,state().day);render();};
  $('#continue').onclick=()=>{if(!appLaunch){playerName=$('#player-name').value.trim().slice(0,30);try{localStorage.setItem(storageKey+':name',playerName);}catch{}}proceed();};
  }else if(screen==='end'){
- app.innerHTML=endUI(ctx)+demoControls();$('#certificate').onclick=showCertificate;
+ app.innerHTML=endUI(ctx)+demoControls();
+ $('#certificate')?.addEventListener('click',showCertificate);
+ $('#diploma-link')?.addEventListener('click',e=>e.currentTarget.select());
+ $('#diploma-preview')?.addEventListener('error',()=>{diplomaError='diplomaImageError';const status=$('.diploma-status');if(status)status.textContent=t(diplomaError);});
  $('#back').onclick=()=>{stop();emitClose();};
  }else if(screen==='certificate'){
  app.innerHTML=certificateUI({t,url:diplomaUrl});
@@ -219,8 +222,7 @@ async function showCertificate(){
     if(syncStatus!=='synced')throw Error('diploma-sync');
    }
    const total=state().total,language=lang;
-   const blob=await api.getDiploma({name:playerName,score:total,lang:language});
-   displayDiploma(blob);
+   diplomaLink=await api.getDiploma({name:playerName,score:total,lang:language});
    emit('certificateRequested',{total,tier:award(total,maximum()),language});
   }catch(error){
    diplomaError=error.message==='api-http-401'?'diplomaAuthError':error.message==='diploma-name'?'diplomaNameError':error.message==='api-http-422'?'diplomaValidationError':error.message==='diploma-sync'?'diplomaSyncError':'diplomaError';

@@ -36,3 +36,9 @@ Object.assign(copy.en,{diplomaDayEight:'Diploma available on day eight'});
 Object.assign(copy.fr,{diplomaDayEight:'Diplôme disponible au huitième jour'});
 Object.assign(copy.ar,{diplomaDayEight:'الشهادة متاحة في اليوم الثامن'});
 Object.assign(copy.hi,{diplomaDayEight:'प्रमाणपत्र आठवें दिन उपलब्ध होगा'});
+
+Object.assign(copy.ru,{diplomaLinkLabel:'Скопируй и сохрани ссылку на твой диплом, она будет доступна всегда',diplomaImageError:'Не удалось загрузить изображение. Ссылка на диплом доступна ниже.'});
+Object.assign(copy.en,{diplomaLinkLabel:'Copy and save the link to your diploma. It will always be available.',diplomaImageError:'Could not load the image. Your diploma link is below.'});
+Object.assign(copy.fr,{diplomaLinkLabel:'Copie et garde le lien vers ton diplôme. Il sera toujours disponible.',diplomaImageError:'Impossible de charger l’image. Le lien vers ton diplôme est ci-dessous.'});
+Object.assign(copy.ar,{diplomaLinkLabel:'انسخ رابط شهادتك واحتفظ به، سيكون متاحًا دائمًا.',diplomaImageError:'تعذر تحميل الصورة. رابط شهادتك أدناه.'});
+Object.assign(copy.hi,{diplomaLinkLabel:'अपने प्रमाणपत्र का लिंक कॉपी करके रखें। यह हमेशा उपलब्ध रहेगा।',diplomaImageError:'चित्र लोड नहीं हुआ। आपके प्रमाणपत्र का लिंक नीचे है।'});

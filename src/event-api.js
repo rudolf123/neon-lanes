@@ -17,21 +17,16 @@ export function validateApiConfig(config){
 }
 export function createEventApi(config,context,fetcher=fetch){
  validateApiConfig(config);
- async function request(path,{query,body,auth=false,text=false,image=false,json=false}={}){
+ async function request(path,{query,body,auth=false,text=false,json=false}={}){
   const url=new URL(config.apiBaseUrl.replace(/\/$/,'')+path);
   if(query)url.search=new URLSearchParams(query).toString();
-  const headers={Accept:image?'image/png':'application/json'};
+  const headers={Accept:'application/json'};
   if(auth)headers[config.authHeader]=(config.authPrefix||'')+context.authToken;
   if(body)headers['Content-Type']=text?'text/plain':!json&&config.bodyEncoding==='form'?'application/x-www-form-urlencoded':'application/json';
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
   try{
    const response=await fetcher(url.href,{method:body?'POST':'GET',headers,body:body?(text?body:!json&&config.bodyEncoding==='form'?new URLSearchParams(body).toString():JSON.stringify(body)):undefined,cache:'no-store',credentials:'omit',redirect:'error',signal:controller.signal});
    if(!response.ok)throw Error('api-http-'+response.status);
-   if(image){
-    const blob=await response.blob();
-    if(blob.type.split(';')[0].toLowerCase()!=='image/png'||!blob.size)throw Error('api-image');
-    return blob;
-   }
    const payload=await response.json();
    if(payload?.success!==true)throw Error('api-rejected');
    return payload;
@@ -54,7 +49,12 @@ export function createEventApi(config,context,fetcher=fetch){
   async getDiploma({name,score,lang='en'}){
    if(typeof name!=='string'||!name.trim()||Array.from(name.trim()).length>40)throw Error('diploma-name');
    if(!Number.isSafeInteger(score)||score<0)throw Error('diploma-score');
-   return request('/rhythm/diploma',{auth:true,image:true,query:{name:name.trim(),score,lang:['en','ru','ar','fr','hi'].includes(lang)?lang:'en'}});
+   const payload=await request('/rhythm/diploma',{auth:true,query:{name:name.trim(),score,lang:['en','ru','ar','fr','hi'].includes(lang)?lang:'en'}});
+   const value=payload?.data?.url;
+   if(typeof value!=='string'||value.trim()!==value)throw Error('diploma-url');
+   let url;try{url=new URL(value);}catch{throw Error('diploma-url');}
+   if(url.protocol!=='https:'||url.username||url.password)throw Error('diploma-url');
+   return value;
   },
  };
 }
