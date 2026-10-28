@@ -4,16 +4,15 @@ import {storyContent} from './stories-content.js?v=4c0b585e0128';
 import {integrationConfig} from './integration-config.js?v=4c0b585e0128';
 import {isAppLaunch,loadLaunchContext,launchEvent,progressKey} from './launch-context.js?v=4c0b585e0128';
 import {createEventApi,createProgressSync} from './event-api.js?v=diploma-url-20261028';
-import {shareDiplomaFile} from './diploma-share.js?v=diploma-dialog-20261028';
 import {lockedDayMessage} from './locked-day.js?v=4c0b585e0128';
 import {loadTrack,unlockAudio,beep,celebrate,stopEffects,prepareApplause} from './game-audio.js?v=4c0b585e0128';
 import {runtime} from './runtime-config.js?v=4c0b585e0128';
 import {loadEvent} from './event-source.js?v=4c0b585e0128';
 import {eventState, award, saveScore, timingPoints} from './event.js?v=day-eight-20261028';
 import {I18N} from './reference-i18n.js?v=4c0b585e0128';
-import {copy} from './copy.js?v=diploma-dialog-20261028';
+import {copy} from './copy.js?v=diploma-toggle-20261028';
 import {decorateScreen,hitMotion,flyHitNote,victoryConfetti} from './motion.js?v=4c0b585e0128';
-import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=diploma-dialog-20261028';
+import {menuUI,resultUI,endUI,certificateUI,bindCertificateToggle,gameUI} from './psd-ui.js?v=diploma-toggle-20261028';
 const $ = s=>document.querySelector(s), app=$('#app');
 const params=new URLSearchParams(location.search), assets='public/assets/';
 const startType=['banner','game'].includes(params.get('start_type'))?params.get('start_type'):null;
@@ -28,8 +27,7 @@ if(!copy[lang]) lang='ru';
 let event, anchor, scores={}, tracks=[], selected=1, screen='loading', audio, frame, run, storageKey, playerName='';
 let launch,api,sync,boards={},syncStatus='local',syncInFlight=null,completionEmitted=false;
 let storiesPlayer=null,storyHistory=null,storiesReward=false;
-let diplomaBusy=false,diplomaError='',diplomaUrl='',diplomaLink='',diplomaShareFailed=false;
-let diplomaFile=null,diplomaFileLoading=false;
+let diplomaBusy=false,diplomaError='',diplomaUrl='',diplomaLink='',certificateBackVisible=true;
 const t=k=>copy[lang][k] ?? I18N[lang]?.[k] ?? k;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>event.serverNow + performance.now()-anchor;
@@ -83,7 +81,7 @@ function render(){
  document.title=`321playsy · ${t('appTitle')}`;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('#rotateText').textContent=t('rotate');
  if(!event){app.innerHTML=`<div class="screen utility-screen"><div class="center"><h2>${t(screen==='error'?(appLaunch?'connectionError':'error'):'loading')}</h2>${screen==='error'?`<button class="primary" id="retry">${t('retry')}</button>`:''}</div></div>`;$('#retry')?.addEventListener('click',boot);decorateScreen();return;}
  if(state().ended){stop();if(screen!=='certificate')screen='end';notifyCompletion();}
- const ctx={t,s:state(),tracks,selected,scores,lang,name:playerName,demo:params.has('demo'),appLaunch,online:!!api,rows:boards[selected],syncStatus,diplomaBusy,diplomaError,diplomaLink,diplomaShareFailed,track:tracks[selected-1],score:run?.score??scores[selected]??0};
+ const ctx={t,s:state(),tracks,selected,scores,lang,name:playerName,demo:params.has('demo'),appLaunch,online:!!api,rows:boards[selected],syncStatus,diplomaBusy,diplomaError,diplomaLink,track:tracks[selected-1],score:run?.score??scores[selected]??0};
  if(screen==='menu'){
  app.innerHTML=menuUI(ctx)+demoControls();
  if(logo){const nextLogo=app.querySelector('[data-art="logo"]');logo.src=nextLogo.src;logo.alt=nextLogo.alt;nextLogo.replaceWith(logo);logo.getAnimations().forEach((a,i)=>{if(logoTimes[i]!=null)a.currentTime=logoTimes[i];});}
@@ -99,20 +97,20 @@ function render(){
  app.innerHTML=endUI(ctx)+demoControls();
  $('#certificate')?.addEventListener('click',showCertificate);
  $('#diploma-link')?.addEventListener('click',e=>e.currentTarget.select());
- const downloadButton=$('#diploma-download');
- if(downloadButton){downloadButton.disabled=diplomaFileLoading;downloadButton.textContent=t(diplomaFileLoading?'diplomaPreparingFile':'diplomaDownload');downloadButton.addEventListener('click',downloadDiploma);}
+ $('#diploma-expand')?.addEventListener('click',()=>{certificateBackVisible=true;screen='certificate';render();});
  const preview=$('#diploma-preview');
  if(preview){
-  const showPreview=()=>preview.closest('.diploma-stage')?.classList.add('is-loaded');
+  const showPreview=()=>{preview.closest('.diploma-stage')?.classList.add('is-loaded');const expand=$('#diploma-expand');if(expand)expand.disabled=false;};
   preview.addEventListener('load',showPreview);
   preview.addEventListener('error',()=>{diplomaError='diplomaImageError';const status=$('.diploma-status');if(status)status.textContent=t(diplomaError);});
   if(preview.complete&&preview.naturalWidth)showPreview();
  }
  $('#back').onclick=()=>{stop();emitClose();};
  }else if(screen==='certificate'){
- app.innerHTML=certificateUI({t,url:diplomaUrl});
- $('#back').onclick=()=>{screen='end';render();URL.revokeObjectURL(diplomaUrl);diplomaUrl='';};
- $('#diploma-image').onerror=()=>{URL.revokeObjectURL(diplomaUrl);diplomaUrl='';diplomaError='diplomaError';screen='end';render();};
+ app.innerHTML=certificateUI({t,url:diplomaUrl||diplomaLink,backVisible:certificateBackVisible});
+ bindCertificateToggle(app,visible=>{certificateBackVisible=visible;});
+ $('#back').onclick=()=>{if(diplomaUrl){URL.revokeObjectURL(diplomaUrl);diplomaUrl='';}screen='end';render();};
+ $('#diploma-image').onerror=()=>{if(diplomaUrl){URL.revokeObjectURL(diplomaUrl);diplomaUrl='';}diplomaError=diplomaLink?'diplomaImageError':'diplomaError';screen='end';render();};
  }else if(screen==='pause'){
  app.innerHTML=`<div class="screen utility-screen pause-screen"><button class="circle-button utility-back" id="back" aria-label="${t('exitMenu')}"><span class="back-arrow"></span></button><div class="center"><span class="large-note">Ⅱ</span><h1>${t('paused')}</h1><button class="primary" id="start">${t('resume')}</button></div></div>`;
  $('#start').onclick=resume;$('#back').onclick=()=>{stop();run=null;screen='menu';render();};
@@ -218,35 +216,7 @@ function updateTimer(){if(!event)return;const s=state();if(screen==='stories'){i
 let lastDay;
 function displayDiploma(blob){
  if(diplomaUrl)URL.revokeObjectURL(diplomaUrl);
- diplomaUrl=URL.createObjectURL(blob);screen='certificate';render();
-}
-async function prepareDiplomaFile(url){
- diplomaFile=null;diplomaFileLoading=true;
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
- try{
-  const response=await fetch(url,{signal:controller.signal});
-  if(!response.ok)throw Error('diploma-download');
-  const blob=await response.blob();
-  if(!blob.size||blob.type.split(';')[0].toLowerCase()!=='image/png')throw Error('diploma-download');
-  if(diplomaLink===url)diplomaFile=new File([blob],'diploma.png',{type:'image/png'});
- }catch{}finally{
-  clearTimeout(timer);
-  if(diplomaLink===url){
-   diplomaFileLoading=false;
-   const button=$('#diploma-download');if(button){button.disabled=false;button.textContent=t('diplomaDownload');}
-  }
- }
-}
-async function downloadDiploma(){
- const button=$('#diploma-download');
- if(!button||button.disabled||!diplomaLink)return;
- button.disabled=true;
- const result=await shareDiplomaFile(diplomaFile);
- if(result==='unavailable'){
-  diplomaShareFailed=true;
-  button.hidden=true;
-  const fallback=$('#diploma-fallback');if(fallback)fallback.hidden=false;
- }else button.disabled=false;
+ diplomaUrl=URL.createObjectURL(blob);certificateBackVisible=true;screen='certificate';render();
 }
 async function showCertificate(){
  if(diplomaBusy||!state().rewardAvailable)return;
@@ -261,7 +231,6 @@ async function showCertificate(){
    }
    const total=state().total,language=lang;
    diplomaLink=await api.getDiploma({name:playerName,score:total,lang:language});
-   prepareDiplomaFile(diplomaLink);
    emit('certificateRequested',{total,tier:award(total,maximum()),language});
   }catch(error){
    diplomaError=error.message==='api-http-401'?'diplomaAuthError':error.message==='diploma-name'?'diplomaNameError':error.message==='api-http-422'?'diplomaValidationError':error.message==='diploma-sync'?'diplomaSyncError':'diplomaError';

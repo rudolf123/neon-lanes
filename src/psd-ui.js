@@ -47,16 +47,16 @@ export function resultUI({t,track,selected,scores,name,score,demo,online,rows,ap
  <div class="result-board-wrap" style="${box(427,1835,2075,1667)}">${board({track,scores,selected,t,name,result:true,demo,online,rows})}</div>
  <button id="continue" class="primary" style="${box(464,3588,2003,307)}">${t('continue')}</button></div>`;
 }
-export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink='',diplomaShareFailed=false}){
+export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink=''}){
  const complete=Object.keys(scores).length;
  if(diplomaLink)return `<div class="screen end-screen diploma-expanded">
  ${picture('win-star',694,1061,1541,1484)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
  <button class="circle-button end-close" id="back" aria-label="${esc(t('close'))}">×</button>
  <h1 class="end-title" style="${box(560,419,1810,580)}">${t('eventCompleted')}</h1>
  <div class="diploma-content">
- <div class="diploma-stage"><div class="diploma-preview"><img id="diploma-preview" src="${esc(diplomaLink)}" alt="${esc(t('diploma'))}"></div></div>
+ <div class="diploma-stage"><button id="diploma-expand" class="diploma-preview" type="button" disabled aria-label="${esc(t('diplomaExpand'))}"><img id="diploma-preview" src="${esc(diplomaLink)}" alt=""></button></div>
  <section class="end-board panel"><h2>${star}${t('score')}: ${s.total}</h2><h3>${complete===7?t('allDaysCompleted'):`${t('done')}: ${complete}/7`}</h3>${days({day:7,selected:7,scores,t,final:true})}</section>
- <div class="diploma-link-wrap"><button id="diploma-download" type="button" class="primary diploma-download" ${diplomaShareFailed?'hidden':''}>${esc(t('diplomaDownload'))}</button><div id="diploma-fallback" ${diplomaShareFailed?'':'hidden'}><label for="diploma-link">${esc(t('diplomaFallback'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"></div></div>
+ <div class="diploma-link-wrap"><label for="diploma-link">${esc(t('diplomaLinkLabel'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"></div>
  <p class="diploma-status" role="status">${diplomaError?esc(t(diplomaError)):''}</p>
  </div></div>`;
  return `<div class="screen end-screen">${picture('win-star',694,1061,1541,1484)}${picture('win-dino',1009,1186,875,1151)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
@@ -76,6 +76,10 @@ export function gameUI({t,track,score}) {
  <div id="hit-feedback" class="hit-feedback" aria-live="polite" aria-atomic="true"></div><div id="feedback" class="countdown" aria-live="polite"></div></div>`;
 }
 
-export function certificateUI({t,url}){
- return `<section class="screen certificate-screen" aria-label="${esc(t('diploma'))}"><header class="certificate-header"><button class="circle-button" id="back" aria-label="${esc(t('close'))}"><span class="back-arrow"></span></button><h1>${esc(t('diploma'))}</h1></header><img id="diploma-image" src="${esc(url)}" alt="${esc(t('diploma'))}"></section>`;
+export function certificateUI({t,url,backVisible=true}){
+ return `<section class="screen certificate-screen" aria-label="${esc(t('diploma'))}"><button id="diploma-toggle-controls" class="certificate-image-button" type="button" aria-label="${esc(t('diplomaToggleControls'))}" aria-pressed="${!backVisible}"><img id="diploma-image" src="${esc(url)}" alt=""></button><button class="circle-button certificate-back" id="back" aria-label="${esc(t('close'))}" ${backVisible?'':'hidden'}><span class="back-arrow"></span></button></section>`;
+}
+export function bindCertificateToggle(container,onChange=()=>{}){
+ const image=container.querySelector('#diploma-toggle-controls'),back=container.querySelector('#back');
+ image.addEventListener('click',()=>{back.hidden=!back.hidden;image.setAttribute('aria-pressed',String(back.hidden));onChange(!back.hidden);});
 }

@@ -43,26 +43,14 @@ Object.assign(copy.fr,{diplomaLinkLabel:'Copie et garde le lien vers ton diplôm
 Object.assign(copy.ar,{diplomaLinkLabel:'انسخ رابط شهادتك واحتفظ به، سيكون متاحًا دائمًا.',diplomaImageError:'تعذر تحميل الصورة. رابط شهادتك أدناه.'});
 Object.assign(copy.hi,{diplomaLinkLabel:'अपने प्रमाणपत्र का लिंक कॉपी करके रखें। यह हमेशा उपलब्ध रहेगा।',diplomaImageError:'चित्र लोड नहीं हुआ। आपके प्रमाणपत्र का लिंक नीचे है।'});
 
-Object.assign(copy.ru,{diplomaDownload:'Скачать диплом',diplomaDownloadError:'Не удалось скачать диплом. Скопируй ссылку и открой её в браузере.'});
-Object.assign(copy.en,{diplomaDownload:'Download diploma',diplomaDownloadError:'Could not download the diploma. Copy the link and open it in your browser.'});
-Object.assign(copy.fr,{diplomaDownload:'Télécharger le diplôme',diplomaDownloadError:'Téléchargement impossible. Copie le lien et ouvre-le dans ton navigateur.'});
-Object.assign(copy.ar,{diplomaDownload:'تنزيل الشهادة',diplomaDownloadError:'تعذر تنزيل الشهادة. انسخ الرابط وافتحه في المتصفح.'});
-Object.assign(copy.hi,{diplomaDownload:'प्रमाणपत्र डाउनलोड करें',diplomaDownloadError:'प्रमाणपत्र डाउनलोड नहीं हुआ। लिंक कॉपी करके ब्राउज़र में खोलें।'});
+Object.assign(copy.ru,{diplomaExpand:'Открыть диплом на весь экран'});
+Object.assign(copy.en,{diplomaExpand:'Open diploma full screen'});
+Object.assign(copy.fr,{diplomaExpand:'Afficher le diplôme en plein écran'});
+Object.assign(copy.ar,{diplomaExpand:'عرض الشهادة بملء الشاشة'});
+Object.assign(copy.hi,{diplomaExpand:'प्रमाणपत्र पूरी स्क्रीन पर खोलें'});
 
-Object.assign(copy.ru,{diplomaOpen:'Не скачалось? Открыть диплом'});
-Object.assign(copy.en,{diplomaOpen:'Download failed? Open your diploma'});
-Object.assign(copy.fr,{diplomaOpen:'Pas de téléchargement ? Ouvre ton diplôme'});
-Object.assign(copy.ar,{diplomaOpen:'لم يتم التنزيل؟ افتح شهادتك'});
-Object.assign(copy.hi,{diplomaOpen:'डाउनलोड नहीं हुआ? प्रमाणपत्र खोलें'});
-
-Object.assign(copy.ru,{diplomaPreparingFile:'Готовим диплом…'});
-Object.assign(copy.en,{diplomaPreparingFile:'Preparing diploma…'});
-Object.assign(copy.fr,{diplomaPreparingFile:'Préparation du diplôme…'});
-Object.assign(copy.ar,{diplomaPreparingFile:'جارٍ إعداد الشهادة…'});
-Object.assign(copy.hi,{diplomaPreparingFile:'प्रमाणपत्र तैयार हो रहा है…'});
-
-Object.assign(copy.ru,{diplomaFallback:'Скачивание не удалось. Скопируйте эту ссылку на диплом. Он будет всегда доступен по этой ссылке.'});
-Object.assign(copy.en,{diplomaFallback:'Download failed. Copy this link to your diploma. It will always be available at this link.'});
-Object.assign(copy.fr,{diplomaFallback:'Le téléchargement a échoué. Copie ce lien vers ton diplôme. Il restera toujours disponible.'});
-Object.assign(copy.ar,{diplomaFallback:'تعذر التنزيل. انسخ رابط شهادتك، وستظل متاحة دائمًا عبر هذا الرابط.'});
-Object.assign(copy.hi,{diplomaFallback:'डाउनलोड नहीं हुआ। प्रमाणपत्र का यह लिंक कॉपी करें। यह हमेशा इस लिंक पर उपलब्ध रहेगा।'});
+Object.assign(copy.ru,{diplomaToggleControls:'Показать или скрыть кнопку назад'});
+Object.assign(copy.en,{diplomaToggleControls:'Show or hide the back button'});
+Object.assign(copy.fr,{diplomaToggleControls:'Afficher ou masquer le bouton retour'});
+Object.assign(copy.ar,{diplomaToggleControls:'إظهار زر الرجوع أو إخفاؤه'});
+Object.assign(copy.hi,{diplomaToggleControls:'वापस जाने वाला बटन दिखाएं या छिपाएं'});
