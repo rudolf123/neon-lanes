@@ -10,9 +10,9 @@ import {runtime} from './runtime-config.js?v=4c0b585e0128';
 import {loadEvent} from './event-source.js?v=4c0b585e0128';
 import {eventState, award, saveScore, timingPoints} from './event.js?v=day-eight-20261028';
 import {I18N} from './reference-i18n.js?v=4c0b585e0128';
-import {copy} from './copy.js?v=diploma-download-20261028';
+import {copy} from './copy.js?v=diploma-fit-20261028';
 import {decorateScreen,hitMotion,flyHitNote,victoryConfetti} from './motion.js?v=4c0b585e0128';
-import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=diploma-download-20261028';
+import {menuUI,resultUI,endUI,certificateUI,gameUI} from './psd-ui.js?v=diploma-fit-20261028';
 const $ = s=>document.querySelector(s), app=$('#app');
 const params=new URLSearchParams(location.search), assets='public/assets/';
 const startType=['banner','game'].includes(params.get('start_type'))?params.get('start_type'):null;
@@ -100,7 +100,7 @@ function render(){
  $('#diploma-download')?.addEventListener('click',downloadDiploma);
  const preview=$('#diploma-preview');
  if(preview){
-  const showPreview=()=>preview.parentElement?.classList.add('is-loaded');
+  const showPreview=()=>preview.closest('.diploma-stage')?.classList.add('is-loaded');
   preview.addEventListener('load',showPreview);
   preview.addEventListener('error',()=>{diplomaError='diplomaImageError';const status=$('.diploma-status');if(status)status.textContent=t(diplomaError);});
   if(preview.complete&&preview.naturalWidth)showPreview();

@@ -101,19 +101,29 @@ body{padding:0}
 .certificate-header h1{font:700 5cqw/1.3 system-ui;margin:0;overflow-wrap:anywhere}
 #diploma-image{display:block;width:100%;height:auto;background:white;border-radius:2cqw}
 
-/* Diploma and permanent link replace the dinosaur and reward button. */
-.end-screen .diploma-preview{position:absolute;top:22%;left:12%;width:76%;height:29%;z-index:3;opacity:0}
-.end-screen .diploma-preview.is-loaded{opacity:1;animation:diploma-float 4s ease-in-out .7s infinite}
-.diploma-preview img{width:100%;height:100%;object-fit:contain}
-.diploma-preview.is-loaded img{animation:diploma-appear .7s cubic-bezier(.22,1.35,.36,1) both}
+/* Fit the diploma and all actions inside the available viewport. */
+.end-screen.diploma-expanded{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:0;aspect-ratio:auto;overflow:hidden}
+.diploma-expanded .end-title{top:2cqw!important;left:9%!important;width:82%!important;height:22cqw!important}
+.diploma-expanded [data-art="win-star"]{top:29cqw!important;left:8%!important;width:84%!important;height:62cqw!important}
+.diploma-expanded [data-art="ribbon-left"]{top:5cqw!important;height:18cqw!important}
+.diploma-expanded [data-art="ribbon-right"]{top:36cqw!important;height:8cqw!important}
+.diploma-content{position:relative;z-index:4;height:100%;display:flex;flex-direction:column;padding:25cqw 7% 6cqw}
+.diploma-stage{display:flex;align-items:center;justify-content:center;flex:0 1 0;min-height:0}
+.diploma-stage.is-loaded{flex-grow:1;animation:diploma-unfold .85s cubic-bezier(.22,1,.36,1) both}
+.diploma-preview{width:100%;height:100%;min-height:0}
+.diploma-preview img{display:block;width:100%;height:100%;object-fit:contain;opacity:0}
+.diploma-stage.is-loaded .diploma-preview{animation:diploma-float 4s ease-in-out .85s infinite}
+.diploma-stage.is-loaded img{animation:diploma-appear .85s cubic-bezier(.22,1.2,.36,1) both}
+@keyframes diploma-unfold{from{flex-grow:0}to{flex-grow:1}}
 @keyframes diploma-appear{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-@keyframes diploma-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-1.2cqw) rotate(2deg)}}
-@media(prefers-reduced-motion:reduce){.end-screen .diploma-preview,.diploma-preview img{animation:none}}
-.end-screen .diploma-link-wrap{position:absolute;top:calc(53.2292% + 38cqw);left:7%;width:86%;z-index:5;text-align:center;color:#fff;font:700 3.2cqw/1.25 system-ui}
+@keyframes diploma-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-1cqw) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.diploma-stage.is-loaded,.diploma-stage.is-loaded .diploma-preview,.diploma-stage.is-loaded img{animation:none}.diploma-stage.is-loaded img{opacity:1}}
+.end-screen.diploma-expanded .end-board{position:relative;top:auto!important;left:auto!important;width:100%!important;height:27cqw!important;flex:none;margin:1cqw 0 0}
+.end-screen.diploma-expanded .diploma-link-wrap{position:relative;width:100%;flex:none;margin-top:2cqw;z-index:5;text-align:center;color:#fff;font:700 3.2cqw/1.25 system-ui}
 .diploma-link-wrap label{display:block;margin:0 0 1.5cqw}
 .diploma-link-wrap input{display:block;width:100%;height:10cqw;padding:1.5cqw 2cqw;border:0;border-radius:2cqw;background:#fff;color:#512879;font:500 3cqw/1 system-ui;user-select:text;-webkit-user-select:text}
 .diploma-download{position:relative;width:100%;height:10cqw;margin-top:1.5cqw;font-size:3.7cqw}
 .diploma-open{display:block;margin-top:1cqw;color:#fff;text-decoration:underline;font:700 3cqw/1.2 system-ui}
 .diploma-open[hidden]{display:none}
-.end-screen .diploma-link-wrap ~ .diploma-status{top:47%;z-index:6}
-.end-screen .diploma-link-wrap ~ .sync-status{bottom:1cqw}
+.end-screen.diploma-expanded .diploma-status{position:relative;top:auto;left:auto;width:100%;flex:none;margin:1cqw 0 0}
+.end-screen.diploma-expanded>.sync-status{position:absolute;bottom:0;left:7%;width:86%;margin:0;font-size:2.5cqw}
