@@ -3,7 +3,7 @@ import {mountStories} from './stories-player.js?v=4c0b585e0128';
 import {storyContent} from './stories-content.js?v=4c0b585e0128';
 import {integrationConfig} from './integration-config.js?v=4c0b585e0128';
 import {isAppLaunch,loadLaunchContext,launchEvent,progressKey} from './launch-context.js?v=4c0b585e0128';
-import {createEventApi,createProgressSync} from './event-api.js?v=rhythm-complete-20261027';
+import {createEventApi,createProgressSync} from './event-api.js?v=song-statistics-20261028';
 import {lockedDayMessage} from './locked-day.js?v=4c0b585e0128';
 import {loadTrack,unlockAudio,beep,celebrate,stopEffects,prepareApplause} from './game-audio.js?v=4c0b585e0128';
 import {runtime} from './runtime-config.js?v=4c0b585e0128';
@@ -213,7 +213,7 @@ async function showCertificate(){
   try{
    if(!api)throw Error('diploma-api');
    // Finish queued writes and refresh confirmed scores before generating a diploma.
-   if(syncInFlight||syncStatus!=='synced'||Object.keys(sync?.state.pending||{}).length||sync?.state.completionPending){
+   if(syncInFlight||syncStatus!=='synced'||Object.keys(sync?.state.pending||{}).length||sync?.state.pendingCompletions){
     await syncProgress();
     if(syncStatus!=='synced')throw Error('diploma-sync');
    }
@@ -236,7 +236,6 @@ async function showCertificate(){
 }
 function notifyCompletion(){
  if(!completionEmitted){completionEmitted=true;emit('eventCompleted',{total:state().total,tier:award(state().total,maximum()),language:lang});}
- if(sync&&!sync.state.completionSent&&!sync.state.completionPending){sync.markCompleted();syncProgress();}
 }
 async function syncProgress(){
  if(!sync||syncInFlight)return syncInFlight;
@@ -288,7 +287,7 @@ async function boot(){
  event=loadedEvent;
  storyHistory=createStoryHistory(storiesKey({accountUuid:launch?.accountUuid||window.PLAY321_CONTEXT?.playerId||'local',eventId:event.id,startsAt:event.startsAt,endsAt:event.endsAt}));
  storyHistory.enter(storyCalendar(event,now()));
- selected=startType?Math.max(1,state().day):Math.max(1,Math.min(state().day,Object.keys(scores).length+1));lastDay=state().day;screen=params.has('demo')&&['menu','result','end'].includes(params.get('screen'))?params.get('screen'):'menu';if(startType==='banner'&&!state().ended&&openStories()){}else if(startType==='game'&&state().day>0&&!state().ended)startGame({fromLaunch:true});else render();emit('ready',{language:lang,orientation:'portrait',integration:api?'api':launch?'local':'demo'});if(sync&&(Object.keys(sync.state.pending).length||sync.state.completionPending))syncProgress();
+ selected=startType?Math.max(1,state().day):Math.max(1,Math.min(state().day,Object.keys(scores).length+1));lastDay=state().day;screen=params.has('demo')&&['menu','result','end'].includes(params.get('screen'))?params.get('screen'):'menu';if(startType==='banner'&&!state().ended&&openStories()){}else if(startType==='game'&&state().day>0&&!state().ended)startGame({fromLaunch:true});else render();emit('ready',{language:lang,orientation:'portrait',integration:api?'api':launch?'local':'demo'});if(sync&&(Object.keys(sync.state.pending).length||sync.state.pendingCompletions))syncProgress();
  }catch{event=null;screen='error';render();}
 }
 window.addEventListener('keydown',e=>{if(e.repeat)return;if(e.code==='KeyQ'||e.code==='ArrowLeft')hit(0);if(e.code==='KeyW'||e.code==='ArrowRight')hit(1);});

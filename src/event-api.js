@@ -59,34 +59,39 @@ export function createEventApi(config,context,fetcher=fetch){
  };
 }
 // Server-confirmed scores live in memory and reload from the API.
-// Only the retry queue and completion receipt are persisted on this device.
+// Only retry queues are persisted on this device.
 export function createProgressSync({api,storage,key,maxScores,onChange=()=>{}}){
  let saved;try{saved=JSON.parse(storage.getItem(key)||'{}');}catch{}
- const state={scores:{},pending:{},completionPending:false,completionSent:false};
+ const state={scores:{},pending:{},pendingCompletions:0};
  const valid=(d,s)=>/^[1-7]$/.test(d)&&Number.isInteger(s)&&s>=0&&s<=maxScores[Number(d)-1];
  for(const d of Object.keys(saved?.pending||{}))if(valid(d,saved.pending[d]))state.pending[d]=saved.pending[d];
- state.completionSent=saved?.completionSent===true;
- state.completionPending=saved?.completionPending===true&&!state.completionSent;
+ // Legacy event-level flags do not represent individual song completions.
+ if(Number.isSafeInteger(saved?.pendingCompletions)&&saved.pendingCompletions>0)state.pendingCompletions=saved.pendingCompletions;
  let active=null;
- function persist(){try{storage.setItem(key,JSON.stringify({pending:state.pending,completionPending:state.completionPending,completionSent:state.completionSent}));}catch{}onChange();}
+ function persist(){try{storage.setItem(key,JSON.stringify({pending:state.pending,pendingCompletions:state.pendingCompletions}));}catch{}onChange();}
  return {
   state,
   merge(day,score){if(score===null)delete state.scores[day];else{state.scores[day]=score;if(Object.hasOwn(state.pending,day))state.pending[day]=Math.max(state.pending[day],score);}persist();},
-  record(day,score){state.pending[day]=Math.max(state.scores[day]??0,state.pending[day]??0,score);persist();},
-  markCompleted(){if(!state.completionSent){state.completionPending=true;persist();}},
+  record(day,score){state.pending[day]=Math.max(state.scores[day]??0,state.pending[day]??0,score);state.pendingCompletions++;persist();},
   flush(){
    if(active)return active;
    active=(async()=>{
     // Yield before finally so even an empty queue clears the assigned promise.
     await Promise.resolve();
     try{
-     while(Object.keys(state.pending).length){
-      const day=Object.keys(state.pending)[0],score=state.pending[day];
-      await api.saveDay(Number(day),score);
-      state.scores[day]=Math.max(state.scores[day]??0,score);
-      if(state.pending[day]===score)delete state.pending[day];persist();
-     }
-     if(state.completionPending&&!state.completionSent){await api.complete();state.completionPending=false;state.completionSent=true;persist();}
+     let scoreError;
+     do{
+      try{
+       while(!scoreError&&Object.keys(state.pending).length){
+        const day=Object.keys(state.pending)[0],score=state.pending[day];
+        await api.saveDay(Number(day),score);
+        state.scores[day]=Math.max(state.scores[day]??0,score);
+        if(state.pending[day]===score)delete state.pending[day];persist();
+       }
+      }catch(error){scoreError=error;}
+      while(state.pendingCompletions){await api.complete();state.pendingCompletions--;persist();}
+     }while(!scoreError&&Object.keys(state.pending).length);
+     if(scoreError)throw scoreError;
     }finally{active=null;}
    })();
    return active;
