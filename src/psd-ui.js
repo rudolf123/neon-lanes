@@ -47,7 +47,7 @@ export function resultUI({t,track,selected,scores,name,score,demo,online,rows,ap
  <div class="result-board-wrap" style="${box(427,1835,2075,1667)}">${board({track,scores,selected,t,name,result:true,demo,online,rows})}</div>
  <button id="continue" class="primary" style="${box(464,3588,2003,307)}">${t('continue')}</button></div>`;
 }
-export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink='',diplomaDownloadTried=false}){
+export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink='',diplomaShareFailed=false}){
  const complete=Object.keys(scores).length;
  if(diplomaLink)return `<div class="screen end-screen diploma-expanded">
  ${picture('win-star',694,1061,1541,1484)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}
@@ -56,7 +56,7 @@ export function endUI({t,s,scores,diplomaBusy=false,diplomaError='',diplomaLink=
  <div class="diploma-content">
  <div class="diploma-stage"><div class="diploma-preview"><img id="diploma-preview" src="${esc(diplomaLink)}" alt="${esc(t('diploma'))}"></div></div>
  <section class="end-board panel"><h2>${star}${t('score')}: ${s.total}</h2><h3>${complete===7?t('allDaysCompleted'):`${t('done')}: ${complete}/7`}</h3>${days({day:7,selected:7,scores,t,final:true})}</section>
- <div class="diploma-link-wrap"><label for="diploma-link">${esc(t('diplomaLinkLabel'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"><button id="diploma-download" type="button" class="primary diploma-download">${esc(t('diplomaDownload'))}</button><a id="diploma-open" class="diploma-open" href="${esc(diplomaLink)}" target="_blank" rel="noopener noreferrer" ${diplomaDownloadTried?'':'hidden'}>${esc(t('diplomaOpen'))}</a></div>
+ <div class="diploma-link-wrap"><button id="diploma-download" type="button" class="primary diploma-download" ${diplomaShareFailed?'hidden':''}>${esc(t('diplomaDownload'))}</button><div id="diploma-fallback" ${diplomaShareFailed?'':'hidden'}><label for="diploma-link">${esc(t('diplomaFallback'))}</label><input id="diploma-link" type="text" dir="ltr" readonly value="${esc(diplomaLink)}" spellcheck="false" autocapitalize="off"></div></div>
  <p class="diploma-status" role="status">${diplomaError?esc(t(diplomaError)):''}</p>
  </div></div>`;
  return `<div class="screen end-screen">${picture('win-star',694,1061,1541,1484)}${picture('win-dino',1009,1186,875,1151)}${picture('ribbon-left',428,294,345,491)}${picture('ribbon-right',2068,1112,322,193)}

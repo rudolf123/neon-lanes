@@ -54,3 +54,15 @@ Object.assign(copy.en,{diplomaOpen:'Download failed? Open your diploma'});
 Object.assign(copy.fr,{diplomaOpen:'Pas de téléchargement ? Ouvre ton diplôme'});
 Object.assign(copy.ar,{diplomaOpen:'لم يتم التنزيل؟ افتح شهادتك'});
 Object.assign(copy.hi,{diplomaOpen:'डाउनलोड नहीं हुआ? प्रमाणपत्र खोलें'});
+
+Object.assign(copy.ru,{diplomaPreparingFile:'Готовим диплом…'});
+Object.assign(copy.en,{diplomaPreparingFile:'Preparing diploma…'});
+Object.assign(copy.fr,{diplomaPreparingFile:'Préparation du diplôme…'});
+Object.assign(copy.ar,{diplomaPreparingFile:'جارٍ إعداد الشهادة…'});
+Object.assign(copy.hi,{diplomaPreparingFile:'प्रमाणपत्र तैयार हो रहा है…'});
+
+Object.assign(copy.ru,{diplomaFallback:'Скачивание не удалось. Скопируйте эту ссылку на диплом. Он будет всегда доступен по этой ссылке.'});
+Object.assign(copy.en,{diplomaFallback:'Download failed. Copy this link to your diploma. It will always be available at this link.'});
+Object.assign(copy.fr,{diplomaFallback:'Le téléchargement a échoué. Copie ce lien vers ton diplôme. Il restera toujours disponible.'});
+Object.assign(copy.ar,{diplomaFallback:'تعذر التنزيل. انسخ رابط شهادتك، وستظل متاحة دائمًا عبر هذا الرابط.'});
+Object.assign(copy.hi,{diplomaFallback:'डाउनलोड नहीं हुआ। प्रमाणपत्र का यह लिंक कॉपी करें। यह हमेशा इस लिंक पर उपलब्ध रहेगा।'});
